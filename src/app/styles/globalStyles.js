@@ -7,6 +7,7 @@ export const colores = StyleSheet.create({
   Medio: "#BF1900",
   Claro: "#E51E00",
   MuyClaro: "#E51E00",
+  Gris: "#dbdbdb"
 });
 
 export const globalStyles = StyleSheet.create({
@@ -29,6 +30,14 @@ export const globalStyles = StyleSheet.create({
     fontFamily: Monserrat,
     borderRadius: 20,
     backgroundColor: colores.MuyClaro,
+    color: "white",
+  },
+    botonOscuro: {
+    textAlign: "center",
+    padding: 10,
+    fontFamily: Monserrat,
+    borderRadius: 20,
+    backgroundColor: colores.Oscuro,
     color: "white",
   }
 });

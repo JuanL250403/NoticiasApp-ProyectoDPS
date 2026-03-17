@@ -90,6 +90,19 @@ export function Inicio() {
         <ScrollView style={styles.pantalla}>
             <BannerTendencias noticias={noticiaActual} />
 
+
+            <View style={{ margin: 20, justifyContent: "center" }}>
+                <TouchableOpacity>
+                    <Link style={[globalStyles.botonOscuro]}>Nuestras fuentes</Link>
+                </TouchableOpacity>
+            </View>
+
+            <View style={{ margin: 20, justifyContent: "center" }}>
+                <TouchableOpacity>
+                    <Link style={[globalStyles.botonOscuro]}>Seguidos</Link>
+                </TouchableOpacity>
+            </View>
+
             <View>
                 <View style={styles.carrusel}>
                     <Text style={globalStyles.titulo}>Entretenimiento</Text>
@@ -174,11 +187,6 @@ export function Inicio() {
                 </ScrollView>
             </View>
 
-            <View style={{margin: 20, justifyContent: "center"}}>
-                <TouchableOpacity>
-                    <Link style={[globalStyles.botonClaro]}>Nuestras fuentes</Link>
-                </TouchableOpacity>
-            </View>
         </ScrollView>
     )
 }

@@ -7,6 +7,8 @@ import { StyleSheet } from "react-native";
 import { globalStyles, colores } from "./src/app/styles/globalStyles";
 import "react-native-gesture-handler";
 import { Configuracion } from "./src/app/screens/configuracion/configuracion";
+import { Explorar } from "./src/app/screens/Explorar/Explorar";
+import { Guardados } from "./src/app/screens/guardados/Guardados";
 
 export default function App() {
   const Tab = createBottomTabNavigator();
@@ -41,7 +43,7 @@ export default function App() {
 
         <Tab.Screen
           name="Explorar"
-          component={Inicio}
+          component={Explorar}
           options={{
             tabBarIcon: ({ focused, color, size }) => (
               <Image
@@ -62,7 +64,7 @@ export default function App() {
 
         <Tab.Screen
           name="Guardados"
-          component={Inicio}
+          component={Guardados}
           options={{
             tabBarIcon: ({ focused, color, size }) => (
               <Image

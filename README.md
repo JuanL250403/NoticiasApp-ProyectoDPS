@@ -24,35 +24,44 @@ Esta aplicación es un visualizador de noticias que consume la API de [NewsAPI](
 
 **Para su ejecución**
 
-Tecnologías necesarias
+Tecnologías necesarias:
 
-- Node.js
-- Expo
-- npm
+- Node.js.
+- Expo.
+- npm.
+
+NewsAPI:
+
+- Necesita tener una cuenta registrada en https://newsapi.org/ y una API key vigente.
 
 **Para su visualización**
 
 - Contar con un emulador de dispositivos moviles o en su defecto un dispositivo movile con acceso a internet.
 
-- Tener instalada la aplicación Expo Go en el dispositivo o emulador mencionado 
+- Tener instalada la aplicación Expo Go en el dispositivo o emulador mencionado.
 
 ### Pasos
 
-1. Clona este repositorio
+1. Clona este repositorio:
 
     `git clone https://github.com/JuanL250403/NoticiasApp-ProyectoDPS.git`
 
-2. Instala las dependencias que la aplicación necesita
+2. Instala las dependencias que la aplicación necesita:
 
     `npm install`
 
-3. Inica la aplicación
+3. Variables de entorno:
+
+- Crear un archivo .env.local.
+- Colocar una variable de entorno EXPO_PUBLIC_API_KEY que contenga la API key brindado por NewsAPI.
+
+4. Inica la aplicación:
 
     `npx expo start`
 
-4. Visualización de la aplicación
+5. Visualización de la aplicación:
 
- Al ejecutarse la aplicación te proporcionara un QR, además de un enlace, que te permitira visualizar la aplicación desde un dispositivo movil o un emulador a través de expo GO
+ Al ejecutarse la aplicación te proporcionara un QR, además de un enlace, que te permitira visualizar la aplicación desde un dispositivo movil o un emulador a través de expo GO.
 
 ## Integrantes del Equipo
 

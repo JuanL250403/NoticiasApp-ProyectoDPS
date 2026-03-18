@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
         borderRadius: 30,
         borderWidth: 1,
         borderColor: colores.Gris,
-        padding: 10,
+        padding: 10 ,
         margin: 10,
         flexDirection: 'row',
         alignItems: 'center'

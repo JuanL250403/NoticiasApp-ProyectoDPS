@@ -1,6 +1,6 @@
 import { use, useState } from "react"
 import { ScrollView, View, Text, Button, StyleSheet, useWindowDimensions } from "react-native"
-import { Image } from "react-native"
+import { Image } from "expo-image"
 import { globalStyles } from "../../../styles/globalStyles"
 
 export function BannerTendencias({ noticias }) {

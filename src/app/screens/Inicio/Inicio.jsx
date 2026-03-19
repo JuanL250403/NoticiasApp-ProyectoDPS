@@ -35,7 +35,7 @@ export function Inicio() {
         const respuestas = await Promise.all(peticiones)
 
         let notis = []
-
+        
         respuestas.forEach((r) => {
             notis.push(r.data.articles)
         })

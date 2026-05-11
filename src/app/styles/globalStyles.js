@@ -33,6 +33,7 @@ export const globalStyles = StyleSheet.create({
     color: "white",
   },
     botonOscuro: {
+    margin: 5,
     textAlign: "center",
     padding: 10,
     fontFamily: Monserrat,

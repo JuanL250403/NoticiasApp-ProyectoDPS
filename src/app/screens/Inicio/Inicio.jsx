@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import { BannerTendencias } from "./components/BannerTendencias";
 import { NoticiaCard } from "./components/NoticiaCard";
 import { Cargando } from "../../components/Cargando";
+import { newsApi } from "../../../../api";
+import { Error } from "../../components/Error";
 export function Inicio() {
     const categoriasFetch = ['entertainment', 'business', 'technology', 'sports', 'science', 'health']
     const categoriasLista = ['Entretenimiento', 'Negocios', "Tecnología", "Deportes", "Ciencia", "Salud"]
@@ -13,20 +15,31 @@ export function Inicio() {
     const [cargado, setCargado] = useState(false)
     const [trending, setTrending] = useState([])
     const [noticias, setNoticias] = useState([[]])
+    const [error, setError] = useState(false)
 
     async function obtenerNoticias() {
-        const key = process.env.EXPO_PUBLIC_API_KEY
-        try {
-            const respuesta = await axios.get(`https://newsapi.org/v2/top-headlines?country=us&pageSize=5&apiKey=${key}`)
-            setTrending(respuesta.data.articles)
-        } catch (e) {
-            console.log("error" + e)
-        }
+
+        await newsApi.get(`/top-headlines`, {
+            params: {
+                country: "us",
+                pageSize: 5,
+            }
+        }).then(res => setTrending(res.data.articles))
+            .catch(error => setError(true))
+
 
         let peticiones = []
 
         categoriasFetch.forEach((categoria) => {
-            peticiones.push(axios.get(`https://newsapi.org/v2/top-headlines?country=us&category=${categoria}&pageSize=5&apiKey=${key}`))
+            peticiones.push(
+                newsApi.get(`/top-headlines`, {
+                    params: {
+                        country: "us",
+                        category: categoria,
+                        pageSize: 5
+                    }
+                })
+            .catch(error => setError(true)))
         })
 
         const respuestas = await Promise.all(peticiones)
@@ -41,15 +54,26 @@ export function Inicio() {
         setCargado(true)
     }
 
+    const recargar = () => {
+        setError(false)
+        obtenerNoticias()
+    }
     useEffect(() => {
         obtenerNoticias()
     }, [])
 
-    if(!cargado){
-        return(
+    if (error) {
+        return (
+            <Error recarga={recargar} />
+        )
+    }
+
+    if (!cargado) {
+        return (
             <Cargando></Cargando>
         )
     }
+
     return (
         <ScrollView style={styles.pantalla}>
             <BannerTendencias noticias={trending} />
@@ -65,7 +89,7 @@ export function Inicio() {
                     <Link style={[globalStyles.botonOscuro]}>Seguidos</Link>
                 </TouchableOpacity>
             </View>
-            
+
             {categoriasLista.map((categoria, index) => (
                 <View key={index}>
                     <View style={styles.carrusel}>
@@ -78,7 +102,7 @@ export function Inicio() {
                         {noticias[index].map((noticia, index) => (
                             <NoticiaCard noticia={noticia} key={index} />
                         ))
-                    }
+                        }
                     </ScrollView>
                 </View>
             ))}

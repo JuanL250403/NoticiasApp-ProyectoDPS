@@ -10,11 +10,12 @@ export function Cargando() {
 
 const styles = StyleSheet.create({
     contenedor: {
-        alignItems: "center"
+        alignItems: "center",
+        justifyContent: "center"
     },
     cargando: {
-        width: 100,
-        height: 100,
+        width: 60,
+        height: 60,
         margin: 50
     }
 })

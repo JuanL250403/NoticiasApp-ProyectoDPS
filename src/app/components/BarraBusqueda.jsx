@@ -1,17 +1,12 @@
-import { TextInput, StyleSheet, View, Image } from "react-native";
+import { TextInput, StyleSheet, View, Image, TouchableOpacity } from "react-native";
 import { colores } from "../styles/globalStyles";
+import { Recargar } from "./Recargar";
 
-export function BarraBusqueda({ busqueda, setBusqueda }) {
+export function BarraBusqueda({ busqueda, setBusqueda, realizarBusqueda }) {
 
     return (
 
         <View style={styles.busqueda}>
-
-            <Image
-                source={require("../../../assets/iconos/explorar.png")}
-                style={styles.lupa}
-            />
-
             <TextInput
                 placeholder="Buscar"
                 style={styles.input}
@@ -19,6 +14,12 @@ export function BarraBusqueda({ busqueda, setBusqueda }) {
                 onChangeText={setBusqueda}
             />
 
+            <TouchableOpacity onPress={() => realizarBusqueda()}>
+                <Image
+                    source={require("../../../assets/iconos/explorar.png")}
+                    style={styles.lupa}
+                />
+            </TouchableOpacity>
         </View>
     )
 }
@@ -38,7 +39,7 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingTop: 10,
         paddingBottom: 10,
-        paddingRight: 10,
+        paddingLeft: 10,
     },
 
     lupa: {

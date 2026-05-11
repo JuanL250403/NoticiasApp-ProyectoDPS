@@ -1,13 +1,22 @@
-import { View, Text, StyleSheet, TouchableOpacity,TextInput,} from "react-native";
-
-import { useState } from "react";
-
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView } from "react-native";
+import { useEffect, useState } from "react";
 import { colores, globalStyles } from "../../styles/globalStyles";
-
+import { Tag } from "./components/Tag";
+import DateTimePicker from '@react-native-community/datetimepicker'
 export function FiltrosExploracion({ navigation }) {
 
-  const [pais, setPais] = useState("us");
+  const [lenguaje, setLenguaje] = useState("");
   const [categoria, setCategoria] = useState("");
+  const [fechaDesde, setFechaDesde] = useState(null)
+  const [fechaHasta, setFechaHasta] = useState(null)
+  const [elegirFechaDesde, setElegirFechaDesde] = useState(false)
+  const [elegirFechaHasta, setElegirFechaHasta] = useState(false)
+  const [puedeFiltrar, setPuedeFiltrar] = useState(false)
+  useEffect(() => {
+    if (categoria && fechaDesde && fechaHasta && lenguaje) {
+      setPuedeFiltrar(true)
+    }
+  }, [categoria, fechaDesde, fechaHasta, lenguaje])
 
   const categorias = [
     "business",
@@ -17,63 +26,123 @@ export function FiltrosExploracion({ navigation }) {
     "science",
   ];
 
+  const lenguajes = [
+    "ar",
+    "de",
+    "en",
+    "es",
+    "fr",
+    "he",
+    "it",
+    "nl",
+    "no",
+    "pt",
+    "ru",
+    "sv",
+    "ud",
+    "zh",
+    "us"
+  ];
+
   function aplicarFiltros() {
-
+    if (!puedeFiltrar) {
+      return
+    }
     navigation.navigate("ExplorarHome", {
-      pais,
+      lenguaje,
       categoria,
+      fechaDesde,
+      fechaHasta
     });
+  }
 
+  const handlerFechaDesde = (date) => {
+    setFechaDesde(date)
+    setElegirFechaDesde(false)
+    console.log(fechaDesde)
+  }
+
+  const handlerFechaHasta = (date) => {
+    setFechaHasta(date)
+    setElegirFechaHasta(false)
+    console.log(fechaHasta)
   }
 
   return (
 
     <View style={styles.container}>
 
+      {
+        elegirFechaDesde ?
+          <DateTimePicker
+            value={new Date()}
+            mode="date"
+            display="default"
+            onChange={(event, date) => handlerFechaDesde(date)}
+          />
+          :
+          <></>
+      }
+
+      {elegirFechaHasta ?
+        <DateTimePicker
+          value={new Date()}
+          mode="date"
+          display="default"
+          onChange={(event, date) => handlerFechaHasta(date)}
+        />
+        :
+        <></>
+      }
+
       <Text style={[globalStyles.titulo, styles.titulo]}>
         Filtros
       </Text>
 
-      <Text style={styles.label}>
-        País
-      </Text>
 
-      <TextInput
-        placeholder="us / mx / sv"
-        value={pais}
-        onChangeText={setPais}
-        style={styles.input}
-      />
 
-      <Text style={styles.label}>
-        Categoría
-      </Text>
+      <ScrollView>
+        <Text style={styles.label}>
+          Categoría
+        </Text>
 
-      <View style={styles.tags}>
+        <View style={styles.tags}>
 
-        {categorias.map((cat, index) => (
+          {categorias.map((cat, index) => (
+            <Tag key={index} opcionActual={categoria} opcion={cat} setOpcion={setCategoria} />
+          ))}
 
-          <TouchableOpacity
-            key={index}
-            style={[
-              styles.tag,
-              categoria === cat && styles.active
-            ]}
-            onPress={() => setCategoria(cat)}
-          >
+        </View>
 
-            <Text style={styles.tagText}>
-              {cat}
-            </Text>
+        <Text style={styles.label}>
+          Lenguaje
+        </Text>
 
+        <View style={styles.tags}>
+
+          {lenguajes.map((len, index) => (
+            <Tag key={index} opcionActual={lenguaje} opcion={len} setOpcion={setLenguaje} />
+          ))}
+
+        </View>
+
+        <Text style={styles.label}>
+          Fecha
+        </Text>
+
+        <View>
+          <Text>Desde</Text>
+          <TouchableOpacity style={styles.input} onPress={() => setElegirFechaDesde(true)}>
+            <Text>{fechaDesde?.toDateString() || "mm/dd/yyyy"}</Text>
           </TouchableOpacity>
-
-        ))}
-
-      </View>
-
+          <Text>Hasta</Text>
+          <TouchableOpacity style={styles.input} onPress={() => setElegirFechaHasta(true)} >
+            <Text>{fechaHasta?.toDateString() || "mm/dd/yyyy"}</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
       <TouchableOpacity
-        style={styles.btn}
+        style={puedeFiltrar ? styles.btn : styles.btnDes}
         onPress={aplicarFiltros}
       >
 
@@ -136,6 +205,14 @@ const styles = StyleSheet.create({
 
   btn: {
     backgroundColor: colores.Oscuro,
+    padding: 15,
+    borderRadius: 15,
+    alignItems: "center",
+    marginTop: 30,
+  },
+
+  btnDes: {
+    backgroundColor: colores.Gris,
     padding: 15,
     borderRadius: 15,
     alignItems: "center",

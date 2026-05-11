@@ -9,8 +9,6 @@ import "react-native-gesture-handler";
 import { Configuracion } from "./src/app/screens/configuracion/configuracion";
 import { Explorar } from "./src/app/screens/Explorar/Explorar";
 import { Guardados } from "./src/app/screens/guardados/Guardados";
-
-import { ExplorarNoticias } from "./src/app/screens/ExplorarNoticias/ExplorarNoticias";
 import { FiltrosExploracion } from "./src/app/screens/FiltrosExploracion/FiltrosExploracion";
 
 const Stack = createStackNavigator();
@@ -20,7 +18,7 @@ function ExplorarStack() {
     <Stack.Navigator>
       <Stack.Screen
         name="ExplorarHome"
-        component={ExplorarNoticias}
+        component={Explorar}
         options={{
           headerShown: false,
         }}
@@ -45,7 +43,9 @@ export default function App() {
       <Tab.Navigator
         screenOptions={{
           tabBarStyle: styles.BottomNavBar,
+          headerShown: false,
         }}
+        initialRouteName="Explorar"
       >
         <Tab.Screen
           name="Inicio"

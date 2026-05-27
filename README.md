@@ -40,6 +40,28 @@ NewsAPI:
 
 - Tener instalada la aplicación Expo Go en el dispositivo o emulador mencionado.
 
+## Dependencies
+
+| Package | Version |
+|--------|---------|
+| @react-native-async-storage/async-storage | 2.2.0 |
+| @react-native-community/checkbox | ^0.5.20 |
+| @react-native-community/datetimepicker | 8.6.0 |
+| @react-native-masked-view/masked-view | 0.3.2 |
+| @react-native-picker/picker | 2.11.4 |
+| @react-navigation/stack | ^7.8.5 |
+| axios | ^1.13.6 |
+| expo | ~55.0.6 |
+| expo-font | ~55.0.4 |
+| expo-image | ~55.0.6 |
+| expo-localization | ^56.0.6 |
+| expo-location | ~55.1.10 |
+| expo-secure-store | ~55.0.14 |
+| expo-status-bar | ~55.0.4 |
+| react | 19.2.0 |
+| react-native | 0.83.2 |
+| react-native-gesture-handler | ~2.30.0 |
+
 ### Pasos
 
 1. Clona este repositorio:

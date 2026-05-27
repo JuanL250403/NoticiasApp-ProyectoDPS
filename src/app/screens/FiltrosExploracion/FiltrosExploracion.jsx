@@ -3,9 +3,11 @@ import { useEffect, useState } from "react";
 import { colores, globalStyles } from "../../styles/globalStyles";
 import { Tag } from "./components/Tag";
 import DateTimePicker from '@react-native-community/datetimepicker'
-export function FiltrosExploracion({ navigation }) {
+import { useConfig } from "../Context/ConfigContext";
 
-  const [lenguaje, setLenguaje] = useState("");
+export function FiltrosExploracion({ navigation }) {
+  const { idioma } = useConfig()
+  const [lenguaje, setLenguaje] = useState(idioma);
   const [categoria, setCategoria] = useState("");
   const [fechaDesde, setFechaDesde] = useState(null)
   const [fechaHasta, setFechaHasta] = useState(null)

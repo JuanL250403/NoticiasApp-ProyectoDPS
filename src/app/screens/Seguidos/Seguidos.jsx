@@ -1,15 +1,16 @@
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
-import { BarraBusqueda } from "../../components/BarraBusqueda";
-import { Filtro } from "../../components/Filtro";
-import { useEffect, useState } from "react";
-import { globalStyles } from "../../styles/globalStyles";
-import { NoEncontrado } from "../../components/NoEncontrado";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { NoiticiaCard } from "./components/NoticiaCard";
-import { Paginacion } from "../../components/Paginacion";
-import { Cargando } from "../../components/Cargando";
+import AsyncStorage from "@react-native-async-storage/async-storage"
+import { Cargando } from "../../components/Cargando"
+import { NoiticiaCard } from "../guardados/components/NoticiaCard"
+import { NoEncontrado } from "../../components/NoEncontrado"
+import { useState, useEffect } from "react"
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native"
+import { colores } from "../../styles/globalStyles"
+import { globalStyles } from "../../styles/globalStyles"
+import { BarraBusqueda } from "../../components/BarraBusqueda"
+import { Paginacion } from "../../components/Paginacion"
+import { newsApi } from "../../../../api"
 
-export function Guardados({ navigation }) {
+export function Seguidos({ navigation }) {
     const [busqueda, setBusqueda] = useState()
     const [noticias, setNoticias] = useState([])
     const [noticiasPagina, setNoticiasPagina] = useState([])
@@ -24,18 +25,38 @@ export function Guardados({ navigation }) {
         }
 
         setCargando(true)
-        setPagina(1)
+        const seguidos = await AsyncStorage.getItem('seguidos')
 
-        const buscadas = noticias.filter((n) => n.title.includes(busqueda))
-
-        if (buscadas.length < 100) {
-            asignarLimitePaginas(buscadas.length)
-        } else {
-            asignarLimitePaginas(100)
+        if (!seguidos) {
+            setCargando(false)
+            return
         }
 
-        const paginaNot = buscadas.slice((pagina * 10) - 10, pagina * 10)
-        setNoticiasPagina(paginaNot)
+        const seguidosJson = JSON.parse(seguidos)
+
+        const listado = seguidosJson.map((s) => {
+            return s.id
+        })
+
+        console.log(listado.join(','))
+        await newsApi.get(`/top-headlines`, {
+            params: {
+                q: busqueda,
+                sources: listado.toString(),
+            }
+        })
+            .then(res => {
+                console.log(res.data.articles.length)
+                setNoticias(res.data.articles)
+                if (res.data.totalResults < 100) {
+                    asignarLimitePaginas(res.data.articles.length)
+                } else {
+                    asignarLimitePaginas(100)
+                }
+                const paginaNot = res.data.articles.slice((pagina * 10) - 10, pagina * 10)
+                setNoticiasPagina(paginaNot)
+            })
+            .catch(error => setError(true))
         setCargando(false)
     }
 
@@ -51,7 +72,7 @@ export function Guardados({ navigation }) {
             setLimitePaginas(parseInt(limite))
         }
     }
-    
+
     const limpiarBusqueda = () => {
         cargarNoticias()
         setBusqueda('')
@@ -59,38 +80,54 @@ export function Guardados({ navigation }) {
 
     const cargarNoticias = async () => {
         setCargando(true)
+        const seguidos = await AsyncStorage.getItem('seguidos')
 
-        const not = await AsyncStorage.getItem('guardados');
-
-        if(!not){
+        if (!seguidos) {
             setCargando(false)
             return
         }
 
-        const notJson = JSON.parse(not);
-        if (notJson.length < 100) {
-            asignarLimitePaginas(notJson.length)
-        } else {
-            asignarLimitePaginas(100)
-        }
+        const seguidosJson = JSON.parse(seguidos)
 
-        const paginaNot = notJson.slice((pagina * 10) - 10, pagina * 10)
-        setNoticias(notJson)
-        setNoticiasPagina(paginaNot)
+        const listado = seguidosJson.map((s) => {
+            return s.id
+        })
+
+        console.log(listado.join(','))
+        await newsApi.get(`/top-headlines`, {
+            params: {
+                sources: listado.toString(),
+            }
+        })
+            .then(res => {
+                console.log(res.data.articles.length)
+                setNoticias(res.data.articles)
+                if (res.data.totalResults < 100) {
+                    asignarLimitePaginas(res.data.articles.length)
+                } else {
+                    asignarLimitePaginas(100)
+                }
+                const paginaNot = res.data.articles.slice((pagina * 10) - 10, pagina * 10)
+                setNoticiasPagina(paginaNot)
+            })
+            .catch(error => setError(true))
         setCargando(false)
+        setPagina(1)
     }
+
 
     useEffect(() => {
         navigation.addListener('focus', () => {
             cargarNoticias()
             setPagina(1)
+            console.log(noticias.length)
         })
     }, [navigation])
 
     useEffect(() => {
         let paginaNot = []
-        const notici = noticias
-        paginaNot = notici.slice((pagina * 10) - 10, pagina * 10)
+
+        paginaNot = noticias.slice((pagina * 10) - 10, pagina * 10)
         setNoticiasPagina(paginaNot)
     }, [pagina])
 
@@ -104,13 +141,12 @@ export function Guardados({ navigation }) {
         )
     }
 
-
     return (
         <View style={styles.container}>
             <View style={styles.header}>
 
                 <Text style={[styles.titulo, globalStyles.titulo]}>
-                    Tus noticias guardadas
+                    De tus fuentes favoritas
                 </Text>
                 <View style={styles.top}>
 
@@ -152,6 +188,7 @@ export function Guardados({ navigation }) {
             </View>
         </View>
     )
+
 }
 
 const styles = StyleSheet.create({
@@ -162,15 +199,15 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
         paddingRight: 10
     },
-    scrollContainer: {
-        flex: 3,
-    },
     borrar: {
         fontSize: 18,
         width: 40,
         height: 40,
         alignItems: 'center',
         justifyContent: 'center'
+    },
+    scrollContainer: {
+        flex: 3,
     },
     header: {
         flex: 1

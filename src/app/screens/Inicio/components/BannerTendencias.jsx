@@ -2,6 +2,7 @@ import { use, useState } from "react"
 import { ScrollView, View, Text, Button, StyleSheet, useWindowDimensions } from "react-native"
 import { Image } from "expo-image"
 import { globalStyles } from "../../../styles/globalStyles"
+import { NoImagen } from "../../../components/NoImagen"
 
 export function BannerTendencias({ noticias }) {
     const { width } = useWindowDimensions()
@@ -11,7 +12,13 @@ export function BannerTendencias({ noticias }) {
             {noticias.map((noticia, index) => (
                 <View style={styles.card} key={index}>
                     <Text style={[styles.titular, globalStyles.titulo]}>{noticia.title}</Text>
-                    <Image source={{ uri: noticia.urlToImage }} resizeMode="cover" width={width} height={300} />
+                    <View style={{width: width}}>
+                        {noticia.urlToImage ?
+                            <Image source={{ uri: noticia.urlToImage }} resizeMode="cover" width={width} height={300} />
+                            :
+                            <NoImagen/>
+                        }
+                    </View>
                 </View>
             ))}
         </ScrollView>

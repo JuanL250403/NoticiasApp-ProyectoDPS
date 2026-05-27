@@ -1,14 +1,14 @@
 import { StyleSheet } from "react-native";
 
 const Monserrat = require("../../../assets/fonts/Montserrat-VariableFont_wght.ttf");
-export const colores = StyleSheet.create({
+export const colores = {
   Oscuro: "#400800",
   Opaco: "#7F1100",
   Medio: "#BF1900",
   Claro: "#E51E00",
   MuyClaro: "#E51E00",
   Gris: "#dbdbdb"
-});
+}
 
 export const globalStyles = StyleSheet.create({
   titulo: {

@@ -1,11 +1,12 @@
 import { TouchableHighlight, Text, StyleSheet, View, TouchableOpacity } from "react-native";
 import { colores } from "../styles/globalStyles";
 import { useState } from "react";
-export function CheckBox({onPress}) {
-    const [presionado, setPresionado] = useState(false)
+export function CheckBox({onPress, value}) {
+    const [presionado, setPresionado] = useState(value ? true : false)
 
     const Presionado = () => {
         setPresionado(!presionado)
+        onPress()
     }
     return (
         <TouchableOpacity style={[styles.caja, presionado ? {backgroundColor: colores.Opaco} : {backgroundColor: "white"}]} onPress={() => Presionado()}>

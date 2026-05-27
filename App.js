@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { Inicio } from "./src/app/screens/Inicio/Inicio";
 import { Image } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StyleSheet } from "react-native";
 import { globalStyles, colores } from "./src/app/styles/globalStyles";
 import "react-native-gesture-handler";
@@ -10,12 +11,19 @@ import { Configuracion } from "./src/app/screens/configuracion/configuracion";
 import { Explorar } from "./src/app/screens/Explorar/Explorar";
 import { Guardados } from "./src/app/screens/guardados/Guardados";
 import { FiltrosExploracion } from "./src/app/screens/FiltrosExploracion/FiltrosExploracion";
+import { detalleArticulo } from "./src/app/screens/articulos/detalleArticulo";
+import { Fuentes } from "./src/app/screens/Fuentes/Fuentes";
+import { FiltrosFuentes } from "./src/app/screens/FiltrosFuentes/FiltrosFuentes";
+import DetallesFuente from "./src/app/screens/detallesFuentes/DetallesFuente";
+import { Seguidos } from "./src/app/screens/Seguidos/Seguidos";
+import { ConfigProvider } from "./src/app/screens/Context/ConfigContext";
+import { useEffect } from "react";
 
 const Stack = createStackNavigator();
 
 function ExplorarStack() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator initialRouteName="ExplorarHome">
       <Stack.Screen
         name="ExplorarHome"
         component={Explorar}
@@ -35,8 +43,32 @@ function ExplorarStack() {
   );
 }
 
+function FuentesStack() {
+  return (
+    <Stack.Navigator initialRouteName="Lista">
+      <Stack.Screen
+        name="Lista"
+        component={Fuentes}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen name="Filtros" component={FiltrosFuentes} />
+      <Stack.Screen name="Detalles" component={DetallesFuente} />
+    </Stack.Navigator>
+  );
+}
+
+
 export default function App() {
   const Tab = createBottomTabNavigator();
+
+  useEffect(() => {
+    const espaciosStorage = async () => {
+      await AsyncStorage.setItem("guardados", JSON.stringify([]));
+      await AsyncStorage.setItem("idioma", JSON.stringify({}));
+    };
+  }, []);
 
   function MyTabs() {
     return (
@@ -45,7 +77,7 @@ export default function App() {
           tabBarStyle: styles.BottomNavBar,
           headerShown: false,
         }}
-        initialRouteName="Explorar"
+        initialRouteName="Configuración"
       >
         <Tab.Screen
           name="Inicio"
@@ -65,6 +97,30 @@ export default function App() {
             tabBarLabelStyle: {
               color: "white",
             },
+          }}
+        />
+
+        <Tab.Screen
+          name="detalles"
+          component={detalleArticulo}
+          options={{
+            tabBarItemStyle: { display: "none" },
+          }}
+        />
+
+        <Tab.Screen
+          name="Seguidos"
+          component={Seguidos}
+          options={{
+            tabBarItemStyle: { display: "none" },
+          }}
+        />
+
+        <Tab.Screen
+          name="Fuentes"
+          component={FuentesStack}
+          options={{
+            tabBarItemStyle: { display: "none" },
           }}
         />
 
@@ -97,8 +153,8 @@ export default function App() {
               <Image
                 source={require("./assets/iconos/guardar.png")} // Ruta de tu imagen
                 style={{
-                  width: size,
-                  height: size,
+                  width: size + 5,
+                  height: size + 5,
                   tintColor: focused ? colores.Oscuro : "white", // Cambia color si está enfocado
                 }}
                 resizeMode="contain"
@@ -135,9 +191,11 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer>
-      <MyTabs />
-    </NavigationContainer>
+    <ConfigProvider>
+      <NavigationContainer>
+        <MyTabs />
+      </NavigationContainer>
+    </ConfigProvider>
   );
 }
 

@@ -8,7 +8,12 @@ import { NoticiaCard } from "./components/NoticiaCard";
 import { Cargando } from "../../components/Cargando";
 import { newsApi } from "../../../../api";
 import { Error } from "../../components/Error";
-export function Inicio() {
+import { useNavigation } from "@react-navigation/native";
+import { TabActions } from "@react-navigation/native";
+import { useConfig } from "../Context/ConfigContext";
+
+export function Inicio({ navigation }) {
+
     const categoriasFetch = ['entertainment', 'business', 'technology', 'sports', 'science', 'health']
     const categoriasLista = ['Entretenimiento', 'Negocios', "Tecnología", "Deportes", "Ciencia", "Salud"]
 
@@ -16,6 +21,14 @@ export function Inicio() {
     const [trending, setTrending] = useState([])
     const [noticias, setNoticias] = useState([[]])
     const [error, setError] = useState(false)
+
+    const verDetalles = (articulo) => {
+        navigation.navigate('detalles', { articulo })
+    }
+
+    useEffect(() => {
+
+    }, []);
 
     async function obtenerNoticias() {
 
@@ -39,7 +52,7 @@ export function Inicio() {
                         pageSize: 5
                     }
                 })
-            .catch(error => setError(true)))
+                    .catch(error => setError(true)))
         })
 
         const respuestas = await Promise.all(peticiones)
@@ -79,14 +92,17 @@ export function Inicio() {
             <BannerTendencias noticias={trending} />
 
             <View style={{ margin: 20, justifyContent: "center" }}>
-                <TouchableOpacity>
-                    <Link style={[globalStyles.botonOscuro]}>Nuestras fuentes</Link>
+
+                <TouchableOpacity onPress={() => navigation.navigate("Fuentes")}>
+
+                    <Text style={[globalStyles.botonOscuro]}>Nuestras fuentes</Text>
                 </TouchableOpacity>
+
             </View>
 
             <View style={{ margin: 20, justifyContent: "center" }}>
-                <TouchableOpacity>
-                    <Link style={[globalStyles.botonOscuro]}>Seguidos</Link>
+                <TouchableOpacity onPress={() => navigation.navigate("Seguidos")}>
+                    <Text style={[globalStyles.botonOscuro]}>Seguidos</Text>
                 </TouchableOpacity>
             </View>
 
@@ -94,13 +110,10 @@ export function Inicio() {
                 <View key={index}>
                     <View style={styles.carrusel}>
                         <Text style={globalStyles.titulo}>{categoria}</Text>
-                        <Link style={globalStyles.redirecciones}>
-                            <Text>Ver más</Text>
-                        </Link>
                     </View>
                     <ScrollView horizontal>
                         {noticias[index].map((noticia, index) => (
-                            <NoticiaCard noticia={noticia} key={index} />
+                            <NoticiaCard noticia={noticia} key={index} verDetalles={verDetalles} />
                         ))
                         }
                     </ScrollView>

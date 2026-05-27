@@ -11,7 +11,11 @@ import { Paginacion } from "../../components/Paginacion";
 import { Recargar } from "../../components/Recargar";
 import { Error } from "../../components/Error";
 import { NoEncontrado } from "../../components/NoEncontrado";
+import { useConfig } from "../Context/ConfigContext";
+
 export function Explorar({ navigation, route }) {
+    const { idioma } = useConfig()
+
     const [busqueda, setBusqueda] = useState()
     const [noticias, setNoticias] = useState([])
     const [noticiasPagina, setNoticiasPagina] = useState([])
@@ -20,15 +24,20 @@ export function Explorar({ navigation, route }) {
     const [limitePaginas, setLimitePaginas] = useState()
     const [error, setError] = useState(false)
 
-    const lenguaje = route?.params?.lenguaje || null
-    const categoria = route?.params?.categoria || null
+    const lenguaje = route?.params?.lenguaje || idioma
+    const categoria = route?.params?.categoria || idioma ? 'general' : null
     const fechaDesde = route?.params?.fechaDesde || null
     const fechaHasta = route?.params?.fechaHasta || null
 
     useEffect(() => {
-        if (lenguaje && categoria && fechaDesde && fechaHasta ) {          
+        if (lenguaje) {
+            aplicarFiltros()
+            return
+        }
+        else if (lenguaje && categoria && fechaDesde && fechaHasta) {
             console.log("filtros" + lenguaje + categoria + fechaDesde + fechaHasta)
             aplicarFiltros()
+            return
         } else {
             cargarNoticias()
         }
@@ -37,8 +46,12 @@ export function Explorar({ navigation, route }) {
     useEffect(() => {
         let paginaNot = []
 
-        paginaNot = noticias.slice((pagina * 10) - 10, pagina * 10)
+        paginaNot = noticias.slice(pagina * 10 - 10, pagina * 10)
         setNoticiasPagina(paginaNot)
+    }, [pagina])
+
+    useEffect(() => {
+        console.log(noticias.length)
     }, [pagina])
 
     const datosDefault = async () => {
@@ -64,7 +77,7 @@ export function Explorar({ navigation, route }) {
             .then(res => {
                 setNoticias(res.data.articles)
                 if (res.data.totalResults < 100) {
-                    asignarLimitePaginas(res.data.totalResults)
+                    asignarLimitePaginas(res.data.articles.length)
                 } else {
                     asignarLimitePaginas(100)
                 }
@@ -76,14 +89,19 @@ export function Explorar({ navigation, route }) {
     }
 
     const asignarLimitePaginas = (resultados) => {
-        const limite = parseInt(resultados / 10)
-        setLimitePaginas(limite)
+        const limite = resultados / 10
+        if (limite > parseInt(limite)) {
+            setLimitePaginas(limite)
+        } else {
+            setLimitePaginas(parseInt(limite))
+        }
     }
 
     const recargar = async () => {
         await datosDefault()
         setError(false)
     }
+
     const aplicarFiltros = async () => {
         setCargando(true)
 
@@ -107,8 +125,6 @@ export function Explorar({ navigation, route }) {
             }
         }
 
-        console.log(filtros)
-
         await newsApi.get(`/everything`, {
 
             params: {
@@ -119,7 +135,7 @@ export function Explorar({ navigation, route }) {
             .then((res) => {
                 setNoticias(res.data.articles)
                 if (res.data.totalResults < 100) {
-                    asignarLimitePaginas(res.data.totalResults)
+                    asignarLimitePaginas(res.data.articles.length)
                 } else {
                     asignarLimitePaginas(100)
                 }
@@ -165,6 +181,10 @@ export function Explorar({ navigation, route }) {
         setCargando(false)
     }
 
+    const verDetalles = (articulo) => {
+        navigation.navigate('detalles', { articulo })
+    }
+
     if (error) {
         return (
             <Error recarga={recargar} />
@@ -173,51 +193,55 @@ export function Explorar({ navigation, route }) {
 
     return (
         <View style={styles.container}>
-            <Text style={[styles.titulo, globalStyles.titulo]}>
-                Explorar Noticias
-            </Text>
+            <View style={styles.header}>
 
-            {/* BUSQUEDA + FILTRO */}
+                <Text style={[styles.titulo, globalStyles.titulo]}>
+                    Explorar
+                </Text>
+                <View style={styles.top}>
 
-            <View style={styles.top}>
+                    <BarraBusqueda busqueda={busqueda} setBusqueda={setBusqueda} realizarBusqueda={realizarBusqueda} />
 
-                <BarraBusqueda busqueda={busqueda} setBusqueda={setBusqueda} realizarBusqueda={realizarBusqueda} />
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate("filtros")}
+                    >
+                        <Filtro />
+                    </TouchableOpacity>
+                </View>
 
-                <TouchableOpacity
-                    onPress={() => navigation.navigate("filtros")}
-                >
-                    <Filtro />
+                <TouchableOpacity onPress={() => datosDefault()}>
+                    <Text style={styles.borrar, globalStyles.botonOscuro}>Borrar filtros</Text>
                 </TouchableOpacity>
+
+
             </View>
 
-            <TouchableOpacity onPress={() => datosDefault()}>
-                <Text style={styles.borrar, globalStyles.botonOscuro}>Borrar filtros</Text>
-            </TouchableOpacity>
-
-            {cargando ?
-                <Cargando />
-                :
-                noticiasPagina.length !== 0 ?
-                    <ScrollView>
-
-                        {/* NOTICIAS */}
-
-                        {noticiasPagina.map((noticia, index) => (
-
-                            <NoiticiaCard noticia={noticia} key={index} />
-
-                        ))}
-
-
-                    </ScrollView>
+            <View style={styles.scrollContainer}>
+                {cargando ?
+                    <Cargando />
                     :
-                    <NoEncontrado mensaje={`No se encontraron resultados`} />
-            }
-            {cargando || noticiasPagina.length == 0 ?
-                <></>
-                :
-                <Paginacion pagina={pagina} setPagina={setPagina} limite={limitePaginas} />
-            }
+                    noticiasPagina.length !== 0 ?
+                        <ScrollView>
+
+                            {/* NOTICIAS */}
+
+                            {noticiasPagina.map((noticia, index) => (
+
+                                <NoiticiaCard noticia={noticia} key={index} verDetalles={verDetalles} />
+
+                            ))}
+
+
+                        </ScrollView>
+                        :
+                        <NoEncontrado mensaje={`No se encontraron resultados`} />
+                }
+                {cargando || noticiasPagina.length == 0 ?
+                    <></>
+                    :
+                    <Paginacion pagina={pagina} setPagina={setPagina} limite={limitePaginas} />
+                }
+            </View>
         </View>
     )
 
@@ -227,16 +251,15 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "white",
-        paddingTop: 20,
+        paddingTop: 40,
         paddingLeft: 10,
         paddingRight: 10
     },
-    vacioContainer: {
-        flex: 1,
-        backgroundColor: "white",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100%"
+    scrollContainer: {
+        flex: 3,
+    },
+    header: {
+        flex: 1
     },
     vacioText: {
         fontSize: 22,
@@ -244,9 +267,10 @@ const styles = StyleSheet.create({
     titulo: {
         textAlign: "center",
         marginTop: 20,
-        fontSize: 20
+        fontSize: 20,
     },
     top: {
+        flex: 1,
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",

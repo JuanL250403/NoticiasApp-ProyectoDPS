@@ -1,8 +1,10 @@
 import { View, Text, ScrollView, useWindowDimensions, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import Checkbox from "expo-checkbox";
+import * as SecureStore from 'expo-secure-store';
 import { colores, globalStyles } from "../../styles/globalStyles";
 import * as Location from 'expo-location';
 import * as Localization from 'expo-localization';
+import { Picker } from "@react-native-picker/picker";
 import { ModalPermisos } from "./components/Modal";
 import { useEffect, useState } from "react";
 import { Alert } from "react-native";
@@ -10,9 +12,13 @@ import { Linking } from "react-native";
 import { useConfig } from "../Context/ConfigContext";
 
 export function Configuracion() {
-    const { idioma, fuente, guardarIdioma, removerIdioma, guardarFuente  } = useConfig()
-
+    const { idioma, fuente, guardarIdioma, removerIdioma, guardarFuente } = useConfig()
+    
     const [autorizadoGeo, setAutorizadoGeo] = useState(false)
+
+    useEffect(() => {
+        console.log(idioma)
+    }, [])
 
     const usarGeo = async () => {
 
@@ -26,7 +32,7 @@ export function Configuracion() {
                 return
             }
 
-        } 
+        }
 
         setAutorizadoGeo(true)
         const actual = await Location.getCurrentPositionAsync({})
@@ -63,31 +69,15 @@ export function Configuracion() {
     }, [])
 
     return (
-        <View style={{ flex: 1 }}>
-            <ModalPermisos />
+        <View style={styles.container}>
+            <Text style={[styles.titulo, globalStyles.titulo]}>Configuración</Text>
             <ScrollView
-                style={{
-                    flex: 1,
-                    backgroundColor: 'white'
-                }}
                 contentContainerStyle={{
                     paddingVertical: 20,
                     alignItems: 'center'
                 }}
                 showsVerticalScrollIndicator={false}
             >
-
-                <View style={[styles.opcion,]}>
-                    <View style={{ width: '80%' }}>
-                        <Text style={globalStyles.titulo}>Modo oscuro</Text>
-
-                        <Text style={styles.descripcion}>
-                            Oscurece la apariencia de la aplicación para tu comodidad
-                        </Text>
-                    </View>
-
-
-                </View>
 
                 <View style={[styles.opcion]}>
                     <View style={{ width: '70%' }}>
@@ -99,7 +89,7 @@ export function Configuracion() {
                     </View>
 
                     <View style={styles.burbuja}>
-                        <TextInput keyboardType="numeric" style={styles.burbujaTexto} value={fuente} onChangeText={guardarFuente} maxLength={2}></TextInput>
+                        <TextInput keyboardType="numeric" style={styles.burbujaTexto} value={fuente.toString()} onChangeText={guardarFuente} maxLength={2}></TextInput>
                     </View>
                 </View>
 
@@ -113,9 +103,27 @@ export function Configuracion() {
                         </Text>
                     </View>
 
-                    <View style={styles.burbuja}>
-                        <Text style={styles.burbujaTexto}>{idioma ?? 'ninguno'}</Text>
-                    </View>
+
+                    <Picker
+                        style={styles.idioma}
+                        selectedValue={idioma}
+                        onValueChange={(value) => guardarIdioma(value)}
+                    >
+                        <Picker.Item label="Árabe" value="ar" />
+                        <Picker.Item label="Alemán" value="de" />
+                        <Picker.Item label="Inglés" value="en" />
+                        <Picker.Item label="Español" value="es" />
+                        <Picker.Item label="Francés" value="fr" />
+                        <Picker.Item label="Hebreo" value="he" />
+                        <Picker.Item label="Italiano" value="it" />
+                        <Picker.Item label="Neerlandés" value="nl" />
+                        <Picker.Item label="Noruego" value="no" />
+                        <Picker.Item label="Portugués" value="pt" />
+                        <Picker.Item label="Ruso" value="ru" />
+                        <Picker.Item label="Sueco" value="sv" />
+                        <Picker.Item label="Urdu" value="ur" />
+                        <Picker.Item label="Chino" value="zh" />
+                    </Picker>
                 </View>
 
                 <TouchableOpacity style={[styles.opcion]} onPress={() => cambiarEstado()}>
@@ -137,6 +145,12 @@ export function Configuracion() {
 
 }
 const styles = StyleSheet.create({
+
+    titulo: {
+        textAlign: "center",
+        marginTop: 20,
+        fontSize: 20,
+    },
     check: {
 
         margin: 10,
@@ -198,9 +212,33 @@ const styles = StyleSheet.create({
 
         elevation: 5
     },
+    idioma: {
+        borderRadius: 9999,
+
+        width: 110,
+        height: 48,
+
+        justifyContent: 'center',
+        alignItems: 'center',
+
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 3
+        },
+        shadowOpacity: 0.18,
+        shadowRadius: 4,
+
+        elevation: 5
+    },
     burbujaTexto: {
         color: 'white',
         fontSize: 20,
         fontWeight: 'bold'
+    },
+    container: {
+        paddingTop: 40,
+        flex: 1,
+        backgroundColor: 'white'
     }
 })

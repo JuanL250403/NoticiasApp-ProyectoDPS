@@ -10,8 +10,8 @@ Esta aplicación es un visualizador de noticias que consume la API de [NewsAPI](
 *   **Búsqueda Avanzada:** Encuentra artículos por titular, categoría (negocios, tecnología, deportes, etc.), fuente, idioma, país y rango de fechas.
 *   **Explorador de Fuentes:** Descubre y filtra medios de comunicación.
 *   **Favoritos sin Conexión:** Guarda artículos en el navegador para leerlos sin internet y descargarlos como archivos.
-*   **Personalización:** Modo oscuro/claro, ajuste de fuente, idioma por defecto y gestión de permisos (geolocalización).
-*   **Navegación Intuitiva:** Barra superior para acceder rápidamente a inicio, búsqueda, guardados y configuración.
+*   **Personalización:** ajuste de fuente, idioma por defecto y gestión de permisos (geolocalización).
+*   **Navegación Intuitiva:** Barra inferior para acceder rápidamente a inicio, búsqueda, guardados y configuración.
 
 ## Tecnologías Utilizadas
 

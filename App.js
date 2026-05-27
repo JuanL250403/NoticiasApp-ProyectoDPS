@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { Inicio } from "./src/app/screens/Inicio/Inicio";
 import { Image } from "react-native";
+import * as SecureStore from 'expo-secure-store';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StyleSheet } from "react-native";
 import { globalStyles, colores } from "./src/app/styles/globalStyles";
@@ -64,10 +65,12 @@ export default function App() {
   const Tab = createBottomTabNavigator();
 
   useEffect(() => {
-    const espaciosStorage = async () => {
-      await AsyncStorage.setItem("guardados", JSON.stringify([]));
-      await AsyncStorage.setItem("idioma", JSON.stringify({}));
+    const cargarDatos = async () => {
+      await SecureStore.setItemAsync('apiToken', process.env.EXPO_PUBLIC_API_KEY)
+    
     };
+
+    cargarDatos()
   }, []);
 
   function MyTabs() {

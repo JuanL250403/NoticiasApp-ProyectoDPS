@@ -41,7 +41,7 @@ export function Explorar({ navigation, route }) {
         } else {
             cargarNoticias()
         }
-    }, [])
+    }, [idioma])
 
     useEffect(() => {
         let paginaNot = []
@@ -50,9 +50,6 @@ export function Explorar({ navigation, route }) {
         setNoticiasPagina(paginaNot)
     }, [pagina])
 
-    useEffect(() => {
-        console.log(noticias.length)
-    }, [pagina])
 
     const datosDefault = async () => {
         setBusqueda(null)
@@ -68,9 +65,11 @@ export function Explorar({ navigation, route }) {
 
     const cargarNoticias = async () => {
         setCargando(true)
-        await newsApi.get(`/top-headlines`, {
+        await newsApi.get(`/everything`, {
             params: {
-                category: "general",
+                q: 'general',
+                language: idioma ?? null,
+                sortBy: 'relevancy',
                 pageSize: 100,
             }
         })
@@ -91,7 +90,7 @@ export function Explorar({ navigation, route }) {
     const asignarLimitePaginas = (resultados) => {
         const limite = resultados / 10
         if (limite > parseInt(limite)) {
-            setLimitePaginas(limite)
+            setLimitePaginas(parseInt(limite) + 1)
         } else {
             setLimitePaginas(parseInt(limite))
         }
@@ -133,6 +132,7 @@ export function Explorar({ navigation, route }) {
         }
         )
             .then((res) => {
+                console.log(res.data)
                 setNoticias(res.data.articles)
                 if (res.data.totalResults < 100) {
                     asignarLimitePaginas(res.data.articles.length)
@@ -164,6 +164,7 @@ export function Explorar({ navigation, route }) {
         await newsApi.get(`/everything`, {
             params: {
                 ...filtros,
+                language: idioma ?? null
             }
         }
         )

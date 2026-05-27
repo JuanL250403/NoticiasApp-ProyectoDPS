@@ -8,8 +8,11 @@ import { newsApi } from "../../../../api";
 import { Paginacion } from "../../components/Paginacion";
 import { FuenteCard } from "./components/FuenteCard";
 import { Filtro } from "../../components/Filtro";
+import { useConfig } from "../Context/ConfigContext";
 
 export function Fuentes({ navigation, route }) {
+    const {idioma} = useConfig()
+
     const [busqueda, setBusqueda] = useState()
     const [fuentes, setFuentes] = useState([])
     const [fuentesPagina, setFuentesPagina] = useState([])
@@ -21,11 +24,6 @@ export function Fuentes({ navigation, route }) {
 
     const lenguaje = route?.params?.lenguaje || null
     const categoria = route?.params?.categoria || null
-
-
-    /*const verDetalles = (articulo) => {
-        navigation.navigate('detalles', { articulo })
-    }*/
 
     const realizarBusqueda = async () => {
         setCargando(true)

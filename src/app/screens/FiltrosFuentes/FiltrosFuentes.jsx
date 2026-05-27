@@ -19,6 +19,7 @@ export function FiltrosFuentes({ navigation }) {
     }, [categoria, lenguaje])
 
     const categorias = [
+        "general",
         "business",
         "technology",
         "sports",

@@ -21,6 +21,7 @@ export function FiltrosExploracion({ navigation }) {
   }, [categoria, fechaDesde, fechaHasta, lenguaje])
 
   const categorias = [
+    "general",
     "business",
     "technology",
     "sports",

@@ -5,7 +5,7 @@ import * as Location from 'expo-location';
 const ConfigContext = createContext()
 
 export function ConfigProvider({ children }) {
-    const [idioma, setIdioma] = useState('')
+    const [idioma, setIdioma] = useState('us')
     const [fuente, setFuente] = useState(22)
 
     const guardarIdioma = async (idioma) => {
@@ -28,29 +28,31 @@ export function ConfigProvider({ children }) {
 
     const cargarDatos = async () => {
         const data = await AsyncStorage.getItem('idioma')
+        const idiomaJson = JSON.parse(data)
 
-        if (!data) {
-            setIdioma('ninguno')
-
+        if (!idiomaJson) {
+            setIdioma('us')
         } else {
-            const idioma = JSON.parse(data)
-            setIdioma(idioma.idioma)
+            const idiomaR = JSON.parse(data)
+            setIdioma(idiomaR.idioma)
         }
 
         const fuente = await AsyncStorage.getItem('fuente')
+        const fuenteJson = JSON.parse(fuente)
 
-        if (!fuente) {
+        if (!fuenteJson) {
             setFuente(22)
         } else {
-            const fuenteJson = JSON.parse(fuente)
+            const fuenteR = JSON.parse(fuente)
 
-            setFuente(fuenteJson.fuente)
+            setFuente(fuenteR.fuente)
         }
 
 
     }
 
     useEffect(() => {
+
         cargarDatos()
     }, [])
 

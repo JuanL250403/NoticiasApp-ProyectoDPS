@@ -39,7 +39,7 @@ export function Seguidos({ navigation }) {
         })
 
         console.log(listado.join(','))
-        await newsApi.get(`/top-headlines`, {
+        await newsApi.get(`/everything`, {
             params: {
                 q: busqueda,
                 sources: listado.toString(),

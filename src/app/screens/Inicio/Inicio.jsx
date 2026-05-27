@@ -13,6 +13,8 @@ import { TabActions } from "@react-navigation/native";
 import { useConfig } from "../Context/ConfigContext";
 
 export function Inicio({ navigation }) {
+    const { idioma } = useConfig()
+
 
     const categoriasFetch = ['entertainment', 'business', 'technology', 'sports', 'science', 'health']
     const categoriasLista = ['Entretenimiento', 'Negocios', "Tecnología", "Deportes", "Ciencia", "Salud"]
@@ -26,15 +28,13 @@ export function Inicio({ navigation }) {
         navigation.navigate('detalles', { articulo })
     }
 
-    useEffect(() => {
-
-    }, []);
-
     async function obtenerNoticias() {
 
-        await newsApi.get(`/top-headlines`, {
+        await newsApi.get(`/everything`, {
             params: {
-                country: "us",
+                q: 'general',
+                language: idioma.toString(),
+                sortBy: 'relevancy',
                 pageSize: 5,
             }
         }).then(res => setTrending(res.data.articles))
@@ -45,10 +45,11 @@ export function Inicio({ navigation }) {
 
         categoriasFetch.forEach((categoria) => {
             peticiones.push(
-                newsApi.get(`/top-headlines`, {
+                newsApi.get(`/everything`, {
                     params: {
-                        country: "us",
-                        category: categoria,
+                        q: categoria,
+                        language: idioma,
+                        sortBy: 'relevancy',
                         pageSize: 5
                     }
                 })
@@ -71,9 +72,10 @@ export function Inicio({ navigation }) {
         setError(false)
         obtenerNoticias()
     }
+
     useEffect(() => {
         obtenerNoticias()
-    }, [])
+    }, [idioma])
 
     if (error) {
         return (
